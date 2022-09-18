@@ -24,9 +24,15 @@ This is mainly a pet project that I started to help standardize the skills of pl
 If you are interested in looking up how an Elo ranking is implemented, check out [this article from Medium about how Elo works](https://medium.com/purple-theory/what-is-elo-rating-c4eb7a9061e0). For now, the calculations are basic using a static K-factor value of 32 and a rating scale of 400.
 
 ## Choosing tournaments
-In `main.py` there is a variable called `TOURNAMENTS_TO_SCAN`. Add the name of the tournament you wish you scan as well as the location of said tournament. See #supported-locations for supported locations and more information.
+In `main.py` there is a variable called `TOURNAMENTS_TO_SCAN`. Add the name of the tournament you wish you scan as well as the location of said tournament. See [Supported Locations](#supported-locations) for supported locations and more information.
 
 You can get the name of the tournament by looking at the URL of the event. For instance, with a url of `https://www.start.gg/tournament/this-is-my-tournament/events` you can see that the name of the tournament is `this-is-my-tournament`.
+
+## API Tokens
+In order to use this, you will need an API token from the various locations to pull data. See the following for how to obtain them:
+- [smash.gg](https://developer.start.gg/docs/authentication)
+
+The API tokens are read in via environment variables or your `.env` file. To use the `.env` file, copy `env.example` to `.env` and then simply insert your API token where designated.
 
 ## Supported locations
 These are the currently supported tournament bracket locations. Expect to see more in the future:
