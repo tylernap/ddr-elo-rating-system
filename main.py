@@ -1,5 +1,6 @@
 import argparse
 from tabulate import tabulate
+import sys
 
 from src import elo
 
@@ -16,7 +17,19 @@ def parse_args():
     parser.add_argument(
         "--all", help="Lookup all DDR tournaments possible", action="store_true"
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--count",
+        "-c",
+        help="Only show players with a minimum number of plays",
+        default=0,
+    )
+
+    args = parser.parse_args()
+    if int(args.count) < 0:
+        print("ERROR: Count must be greater than 0")
+        parser.print_help()
+        sys.exit(5)
+    return args
 
 
 def main():
@@ -50,10 +63,17 @@ def main():
         elo.adjust_player_ratings_from_match(match)
 
     print("\nElo ratings of all players:\n")
-    table = [
-        [player.name, round(player.rating)]
-        for player in sorted(players.players, key=lambda p: p.rating, reverse=True)
-    ]
+    if args.count:
+        table = [
+            [player.name, round(player.rating)]
+            for player in sorted(players.players, key=lambda p: p.rating, reverse=True)
+            if player.match_count > int(args.count)
+        ]
+    else:
+        table = [
+            [player.name, round(player.rating)]
+            for player in sorted(players.players, key=lambda p: p.rating, reverse=True)
+        ]
     print(tabulate(table, headers=["Name", "Rating"]))
 
 

@@ -34,10 +34,13 @@ def paginate(function: Callable, *args) -> list:
     results = []
     page_number = 1
     while True:
-        page = function(*args, page_number)
-        if not page:
-            return results
-        results += page
+        try:
+            page = function(*args, page_number)
+            if not page:
+                return results
+            results += page
+        except TypeError as e:
+            print(f"Failed to return results: {str(e)}")
         page_number += 1
 
 
