@@ -20,6 +20,7 @@ class Player:
     name: str
     id: str
     rating: int = 1000
+    match_count: int = 0
 
 
 class Players:
@@ -124,6 +125,9 @@ def add_matches(brackets: list, players: Players, matches: Matches):
 
 
 def adjust_player_ratings_from_match(match: Match):
+    if match.player1 is None or match.player2 is None:
+        logger.warning(f"Could not find players of match {match.id}")
+        return
     player1_expected_score = 1 / (
         1 + math.pow(10, (match.player2.rating - match.player1.rating) / SCALE_FACTOR)
     )
@@ -152,3 +156,6 @@ def adjust_player_ratings_from_match(match: Match):
         match.player2.rating = match.player2.rating + (
             K_FACTOR * (0.5 - player2_expected_score)
         )
+
+    match.player1.match_count += 1
+    match.player2.match_count += 1
