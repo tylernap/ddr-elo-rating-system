@@ -1,3 +1,4 @@
+import argparse
 from tabulate import tabulate
 
 from src import elo
@@ -10,16 +11,36 @@ TOURNAMENTS_TO_SCAN = {
 }
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Get Elo ratings of players")
+    parser.add_argument(
+        "--all", help="Lookup all DDR tournaments possible", action="store_true"
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+
     players = elo.Players()
     matches = elo.Matches()
-    for tournament, location in TOURNAMENTS_TO_SCAN.items():
-        print(f"Getting brackets from tournament {tournament}")
-        brackets = elo.get_brackets(tournament, location)
-        print(f"Getting players from {tournament}")
-        elo.add_players(brackets, players)
-        print(f"Getting matches from {tournament}")
-        elo.add_matches(brackets, players, matches)
+
+    if args.all:
+        print("Getting brackets from all available tournaments from start.gg")
+        brackets = elo.get_all_brackets()
+        print("Getting all available players in tournaments")
+        elo.add_players(list(set(brackets)), players)
+        print("Getting all matches")
+        print("NOTE: This will take a while")
+        elo.add_matches(list(set(brackets)), players, matches)
+    else:
+        for tournament, location in TOURNAMENTS_TO_SCAN.items():
+            print(f"Getting brackets from tournament {tournament}")
+            brackets = elo.get_brackets(tournament, location)
+            print(f"Getting players from {tournament}")
+            elo.add_players(brackets, players)
+            print(f"Getting matches from {tournament}")
+            elo.add_matches(brackets, players, matches)
 
     # Assuming match IDs are roughly chronological
     matches.matches = sorted(matches.matches, key=lambda m: m.id)

@@ -88,6 +88,12 @@ class Matches:
         self.matches.append(new_match)
 
 
+def get_all_brackets():
+    brackets = []
+    brackets += startgg.get_brackets_from_all_tournaments()
+    return brackets
+
+
 def get_brackets(tournament: str, location: str):
     if location == "startgg":
         return startgg.get_brackets_from_tournament(tournament)
