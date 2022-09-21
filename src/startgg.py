@@ -18,6 +18,13 @@ DDR_A_ID = 2902
 DDR_A20_ID = 33637
 DDR_EXTREME_PRO_ID = 2907
 
+# When searching for all tournaments, these IDs will be the ones searched
+GAMES_TO_SEARCH = [
+    DDR_A_ID,
+    DDR_A20_ID,
+    DDR_EXTREME_PRO_ID,
+]
+
 # Filter all tournaments by minimum number of entrants
 MIN_NUM_OF_ENTRANTS = 20
 
@@ -46,32 +53,14 @@ def paginate(function: Callable, *args) -> list:
 
 def get_brackets_from_all_tournaments() -> list:
     tournaments = []
-    # Get tournaments for DDR A
-    tournaments += paginate(
-        smash.tournament_show_event_by_game_size_dated,
-        MIN_NUM_OF_ENTRANTS,
-        DDR_A_ID,
-        0,
-        int(time.time()),
-    )
-
-    # Get tournaments for DDR A20
-    tournaments += paginate(
-        smash.tournament_show_event_by_game_size_dated,
-        MIN_NUM_OF_ENTRANTS,
-        DDR_A20_ID,
-        0,
-        int(time.time()),
-    )
-
-    # Get tournaments for DDR Extreme Pro
-    tournaments += paginate(
-        smash.tournament_show_event_by_game_size_dated,
-        MIN_NUM_OF_ENTRANTS,
-        DDR_EXTREME_PRO_ID,
-        0,
-        int(time.time()),
-    )
+    for game in GAMES_TO_SEARCH:
+        tournaments += paginate(
+            smash.tournament_show_event_by_game_size_dated,
+            MIN_NUM_OF_ENTRANTS,
+            game,
+            0,
+            int(time.time()),
+        )
 
     brackets = []
     for tournament in tournaments:

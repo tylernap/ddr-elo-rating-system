@@ -34,6 +34,8 @@ In `main.py` there is a variable called `TOURNAMENTS_TO_SCAN`. Add the name of t
 
 You can get the name of the tournament by looking at the URL of the event. For instance, with a url of `https://www.start.gg/tournament/this-is-my-tournament/events` you can see that the name of the tournament is `this-is-my-tournament`.
 
+If you want to scan everything, use the `--all` argument when running `main.py`. This will ignore the specificed tournaments and instead look for all tournaments running the games in `GAMES_TO_SEARCH` in `startgg.py`.
+
 ## Supported locations
 These are the currently supported tournament bracket locations. Expect to see more in the future:
 - [startgg](https://www.start.gg)
