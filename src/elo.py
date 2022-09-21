@@ -20,7 +20,15 @@ class Player:
     name: str
     id: str
     rating: int = 1000
-    match_count: int = 0
+    wins: int = 0
+    losses: int = 0
+    draws: int = 0
+
+    def get_total_matches(self):
+        return self.wins + self.losses + self.draws
+
+    def get_record_percentage(self):
+        return int(100 * ((self.wins + self.draws / 2) / (self.get_total_matches())))
 
 
 class Players:
@@ -142,6 +150,8 @@ def adjust_player_ratings_from_match(match: Match):
         match.player2.rating = match.player2.rating + (
             K_FACTOR * (0 - player2_expected_score)
         )
+        match.player1.wins += 1
+        match.player2.losses += 1
     elif match.player1_score < match.player2_score:
         match.player1.rating = match.player1.rating + (
             K_FACTOR * (0 - player1_expected_score)
@@ -149,6 +159,9 @@ def adjust_player_ratings_from_match(match: Match):
         match.player2.rating = match.player2.rating + (
             K_FACTOR * (1 - player2_expected_score)
         )
+        match.player1.losses += 1
+        match.player2.wins += 1
+    # Ideally, this should never happen, but adding it anyway just in case
     elif match.player1_score == match.player2_score:
         match.player1.rating = match.player1.rating + (
             K_FACTOR * (0.5 - player1_expected_score)
@@ -156,6 +169,5 @@ def adjust_player_ratings_from_match(match: Match):
         match.player2.rating = match.player2.rating + (
             K_FACTOR * (0.5 - player2_expected_score)
         )
-
-    match.player1.match_count += 1
-    match.player2.match_count += 1
+        match.player1.draws += 1
+        match.player2.draws += 1

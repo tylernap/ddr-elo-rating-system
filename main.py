@@ -63,18 +63,31 @@ def main():
         elo.adjust_player_ratings_from_match(match)
 
     print("\nElo ratings of all players:\n")
+
+    filtered_player_list = []
     if args.count:
-        table = [
-            [player.name, round(player.rating)]
-            for player in sorted(players.players, key=lambda p: p.rating, reverse=True)
-            if player.match_count > int(args.count)
-        ]
+        for player in players.players:
+            if player.get_total_matches() > int(args.count):
+                filtered_player_list.append(player)
     else:
-        table = [
-            [player.name, round(player.rating)]
-            for player in sorted(players.players, key=lambda p: p.rating, reverse=True)
+        filtered_player_list = players.players
+
+    table = [
+        [
+            rank,
+            player.name,
+            round(player.rating),
+            (
+                f"{player.wins}-{player.losses}-{player.draws} "
+                f"({player.get_record_percentage()}%)"
+            ),
         ]
-    print(tabulate(table, headers=["Name", "Rating"]))
+        for rank, player in enumerate(
+            sorted(filtered_player_list, key=lambda p: p.rating, reverse=True),
+            start=1,
+        )
+    ]
+    print(tabulate(table, headers=["Rank", "Name", "Rating", "Record"]))
 
 
 if "__main__" in __name__:
