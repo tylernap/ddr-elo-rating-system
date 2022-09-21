@@ -4,7 +4,7 @@ import math
 
 from src import startgg
 
-K_FACTOR = 32
+K_FACTOR = 64
 SCALE_FACTOR = 400
 
 logger = logging.getLogger()
@@ -66,9 +66,9 @@ class Match:
     id: str
     player1: Player
     player2: Player
-    complete: bool
     player1_score: int
     player2_score: int
+    winner: Player
 
 
 class Matches:
@@ -124,13 +124,26 @@ def add_matches(brackets: list, players: Players, matches: Matches):
             if not startgg_match["completed"]:
                 logger.info(f"Match {startgg_match} is not complete. Skipping")
                 continue
+            if startgg_match["winnerId"] == startgg_match["entrant1Id"]:
+                winner_id = startgg_match["entrant1Players"][0]["playerId"]
+            elif startgg_match["winnerId"] == startgg_match["entrant2Id"]:
+                winner_id = startgg_match["entrant2Players"][0]["playerId"]
+            # If winner is not set, use the greater of the scores. Otherwise call it a draw
+            elif startgg_match["entrant1Score"] == startgg_match["entrant2Score"]:
+                # Ideally no one should have an ID of 0
+                winner_id = 0
+            else:
+                winner_id = max(
+                    startgg_match["entrant1Score"], startgg_match["entrant2Score"]
+                )
+
             match = Match(
                 startgg_match["id"],
                 players.get_player(startgg_match["entrant1Players"][0]["playerId"]),
                 players.get_player(startgg_match["entrant2Players"][0]["playerId"]),
-                startgg_match["completed"],
                 startgg_match["entrant1Score"],
                 startgg_match["entrant2Score"],
+                players.get_player(winner_id),
             )
             matches.add_match(match)
 
@@ -146,7 +159,7 @@ def adjust_player_ratings_from_match(match: Match):
         1 + math.pow(10, (match.player1.rating - match.player2.rating) / SCALE_FACTOR)
     )
 
-    if match.player1_score > match.player2_score:
+    if match.winner == match.player1:
         match.player1.rating = match.player1.rating + (
             K_FACTOR * (1 - player1_expected_score)
         )
@@ -155,7 +168,7 @@ def adjust_player_ratings_from_match(match: Match):
         )
         match.player1.wins += 1
         match.player2.losses += 1
-    elif match.player1_score < match.player2_score:
+    elif match.winner == match.player2:
         match.player1.rating = match.player1.rating + (
             K_FACTOR * (0 - player1_expected_score)
         )
@@ -165,7 +178,7 @@ def adjust_player_ratings_from_match(match: Match):
         match.player1.losses += 1
         match.player2.wins += 1
     # Ideally, this should never happen, but adding it anyway just in case
-    elif match.player1_score == match.player2_score:
+    elif match.winner == None:
         match.player1.rating = match.player1.rating + (
             K_FACTOR * (0.5 - player1_expected_score)
         )
