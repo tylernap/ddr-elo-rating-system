@@ -17,6 +17,19 @@ chris                       1133
 ...
 ```
 
+## Usage
+```
+usage: main.py [-h] [--all] [--count COUNT]
+
+Get Elo ratings of players
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --all                 Lookup all DDR tournaments possible
+  --count COUNT, -c COUNT
+                        Only show players with a minimum number of plays
+```
+
 ## Why?
 This is mainly a pet project that I started to help standardize the skills of players within tournament settings. The hope is that this or something like this can be used in a more widespread way.
 
