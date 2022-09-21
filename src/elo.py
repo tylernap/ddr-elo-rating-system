@@ -121,6 +121,9 @@ def add_players(brackets: list, players: Players):
 def add_matches(brackets: list, players: Players, matches: Matches):
     for bracket in brackets:
         for startgg_match in startgg.get_matches_from_bracket(bracket):
+            if not startgg_match["completed"]:
+                logger.info(f"Match {startgg_match} is not complete. Skipping")
+                continue
             match = Match(
                 startgg_match["id"],
                 players.get_player(startgg_match["entrant1Players"][0]["playerId"]),

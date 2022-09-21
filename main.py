@@ -4,11 +4,10 @@ import sys
 
 from src import elo
 
+# Add the tournaments you want to scan here if you are not scanning all
 TOURNAMENTS_TO_SCAN = {
     "the-big-deal-3d": "startgg",
     "ceo-2019-fighting-game-championships": "startgg",
-    "infinity-stage-san-jose": "startgg",
-    "mistake-on-the-lake-3": "startgg",
 }
 
 
